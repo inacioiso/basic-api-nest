@@ -1,45 +1,101 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
+  moduleFormat = "cjs"
 }
 
 datasource db {
   provider = "postgresql"
 }
 
+enum Role {
+  PROFESSOR
+  ALUNO
+}
+
+enum Concept {
+  PESSIMO
+  RUIM
+  REGULAR
+  BOM
+  EXCELENTE
+}
+
 model User {
-  id        Int     @default(autoincrement()) @id
-  email     String @unique
+  id        String @id @default(cuid())
   name      String
+  email     String   @unique
   password  String
+  role      Role
   createdAt DateTime @default(now())
-  
-  questions Questions[]
-  answers   Answers[]
+
+  disciplines Discipline[] @relation("ProfessorDisciplines")
+  enrollments Enrollment[]
 }
 
-model Questions {
-  id        Int     @default(autoincrement()) @id
-  title     String
-  body      String
-  createdAt DateTime @default(now())
-  userId    Int
-  user      User @relation(fields: [userId], references: [id])
-  answers   Answers[]
-}
-
-model Answers {
-  id          Int     @default(autoincrement()) @id
-  title       String
-  body        String
+model Discipline {
+  id          String   @id @default(uuid())
+  name        String
+  professorId String
   createdAt   DateTime @default(now())
-  userId      Int
-  questionId  Int
-  user        User @relation(fields: [userId], references: [id])
-  questions   Questions @relation(fields: [questionId], references: [id])  
+
+  professor   User        @relation("ProfessorDisciplines", fields: [professorId], references: [id])
+  classes     Classroom[]
+  criteria    Criteria[]
+}
+
+model Classroom {
+  id            String   @id @default(uuid())
+  name          String
+  disciplineId  String
+  createdAt     DateTime @default(now())
+
+  discipline   Discipline  @relation(fields: [disciplineId], references: [id])
+  enrollments  Enrollment[]
+}
+
+model Enrollment {
+  id         String   @id @default(uuid())
+  studentId  String
+  classId    String
+
+  finalScore Float?
+  concept    Concept?
+
+  student    User       @relation(fields: [studentId], references: [id])
+  classroom  Classroom  @relation(fields: [classId], references: [id])
+  evaluations Evaluation[]
+
+  @@unique([studentId, classId])
+}
+
+model Criteria {
+  id           String @id @default(uuid())
+  name         String
+  disciplineId String
+
+  discipline   Discipline   @relation(fields: [disciplineId], references: [id])
+  subCriteria  SubCriteria[]
+}
+
+model SubCriteria {
+  id         String  @id @default(uuid())
+  name       String
+  weight     Float
+  criteriaId String
+
+  criteria   Criteria     @relation(fields: [criteriaId], references: [id])
+  evaluations Evaluation[]
+}
+
+model Evaluation {
+  id            String  @id @default(uuid())
+  enrollmentId  String
+  subCriteriaId String
+  score         Float
+
+  enrollment   Enrollment  @relation(fields: [enrollmentId], references: [id])
+  subCriteria  SubCriteria @relation(fields: [subCriteriaId], references: [id])
+
+  @@unique([enrollmentId, subCriteriaId])
 }
