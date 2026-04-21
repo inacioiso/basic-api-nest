@@ -19,7 +19,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('id')
-  listUsers(@Req() req: Request) {
+  listID(@Req() req: Request) {
     return req.user;
   }
 

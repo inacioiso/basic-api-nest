@@ -40,16 +40,6 @@ export class AuthService {
     return new UserResponseDto(user);
   }
 
-  async listUsers(): Promise<UserResponseDto[]> {
-    const users = await this.prismaService.user.findMany();
-
-    if (users.length === 0) {
-      throw new NotFoundException('No users found');
-    }
-
-    return users.map((user) => new UserResponseDto(user));
-  }
-
   async loginUser(loginUserDto: LoginUserDto) {
     const user = await this.prismaService.user.findUnique({
       where: { email: loginUserDto.email },
