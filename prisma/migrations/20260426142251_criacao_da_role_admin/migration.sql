@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "Role" AS ENUM ('PROFESSOR', 'ALUNO');
+CREATE TYPE "Role" AS ENUM ('PROFESSOR', 'ALUNO', 'ADMIN');
 
 -- CreateEnum
 CREATE TYPE "Concept" AS ENUM ('PESSIMO', 'RUIM', 'REGULAR', 'BOM', 'EXCELENTE');

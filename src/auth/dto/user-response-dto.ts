@@ -2,11 +2,11 @@ import { User } from '../../generated/prisma/client';
 import { Role } from '../../generated/prisma/enums';
 
 export class UserResponseDto {
-  id: string;
-  name: string;
-  email: string;
-  role: Role;
-  createdAt: Date;
+  readonly id: string;
+  readonly name: string;
+  readonly email: string;
+  readonly role: Role;
+  readonly createdAt: Date;
 
   constructor(user: User) {
     this.id = user.id;

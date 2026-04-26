@@ -4,7 +4,7 @@ import { CreateUserDto } from './dto/create-user-dto';
 import { UserResponseDto } from './dto/user-response-dto';
 import { LoginUserDto } from './dto/login-user-dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import type { Request } from 'express';
+import type { AuthenticatedRequest } from '../utils/authenticated-request';
 
 @Controller('auth')
 export class AuthController {
@@ -19,7 +19,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('id')
-  listID(@Req() req: Request) {
+  listID(@Req() req: AuthenticatedRequest) {
     return req.user;
   }
 

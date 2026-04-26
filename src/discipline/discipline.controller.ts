@@ -2,6 +2,7 @@ import { Controller, UseGuards, Req, Body, UnauthorizedException, Post, Get } fr
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { DisciplineService } from './discipline.service';
 import { CreateDisciplineDto } from './dto/create-discipline-dto';
+import type { AuthenticatedRequest } from '../utils/authenticated-request';
 
 @UseGuards(JwtAuthGuard)
 @Controller('discipline')
@@ -11,7 +12,7 @@ export class DisciplineController {
     ){}
 
     @Post()
-    async createDiscipline(@Req() req, @Body() createDisciplineDto: CreateDisciplineDto) {
+    async createDiscipline(@Req() req: AuthenticatedRequest, @Body() createDisciplineDto: CreateDisciplineDto) {
         if (!req.user) throw new UnauthorizedException();
 
         const userId = req.user.id;
@@ -20,7 +21,7 @@ export class DisciplineController {
     }
 
     @Get()
-    async getDisciplinesByProfessor(@Req() req) {
+    async getDisciplinesByProfessor(@Req() req: AuthenticatedRequest) {
         if (!req.user) throw new UnauthorizedException();
     
         const professorId = req.user.id;

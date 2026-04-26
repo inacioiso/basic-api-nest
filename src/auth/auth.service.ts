@@ -1,7 +1,7 @@
 import {
   Injectable,
-  NotFoundException,
   ConflictException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../database/prisma.service';
@@ -46,7 +46,7 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new NotFoundException('Invalid email or password');
+      throw new UnauthorizedException('Invalid email or password');
     }
 
     const isPasswordValid = await bcrypt.compare(
@@ -55,11 +55,12 @@ export class AuthService {
     );
 
     if (!isPasswordValid) {
-      throw new NotFoundException('Invalid email or password');
+      throw new UnauthorizedException('Invalid email or password');
     }
 
     const payload = {
       sub: user.id,
+      role: user.role,
     };
 
     return {

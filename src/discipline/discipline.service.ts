@@ -40,6 +40,9 @@ export class DisciplineService {
         return await this.prismaService.discipline.findMany({
             where: {
                 professorId: professorId,
+            }, 
+            include: {
+                criteria: true,
             }
         });
     }
